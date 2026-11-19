@@ -123,7 +123,7 @@ export default function CompressPDF() {
         ignoreEncryption: true,
       });
 
-      // ✅ FIXED: Strip hidden metadata — each call separate, no chaining
+      // Strip hidden metadata — each call separate, no chaining
       try {
         pdfDoc.setTitle("");
       } catch {}
@@ -143,7 +143,7 @@ export default function CompressPDF() {
         pdfDoc.setCreator("");
       } catch {}
 
-      // 2) Re-compress embedded JPEG images — this is where the real savings come from
+      // Re-compress embedded JPEG images — this is where the real savings come from
       const quality =
         compressionLevel === "strong"
           ? 0.45
@@ -166,7 +166,10 @@ export default function CompressPDF() {
           if (stream.dict.has(PDFName.of("SMask"))) continue;
 
           const originalBytes = stream.contents;
-          const blob = new Blob([originalBytes], { type: "image/jpeg" });
+          // ✅ Blob fix: Uint8Array -> ArrayBuffer
+          const blob = new Blob([originalBytes.buffer as ArrayBuffer], {
+            type: "image/jpeg",
+          });
 
           // Try to decode the image; if it's not a standard JPEG, skip it
           let bmp: ImageBitmap;
@@ -190,9 +193,10 @@ export default function CompressPDF() {
 
           const newBytes = new Uint8Array(await jpegBlob.arrayBuffer());
 
-          // Only replace if we actually made it smaller
+          // ✅ ONLY ONE if block now — no duplicate, no stray comment
           if (newBytes.length < originalBytes.length) {
-            stream.contents = newBytes;
+            // ✅ readonly bypass via cast
+            (stream as any).contents = newBytes;
             stream.dict.set(PDFName.of("Filter"), PDFName.of("DCTDecode"));
             stream.dict.set(PDFName.of("Width"), PDFNumber.of(bmp.width));
             stream.dict.set(PDFName.of("Height"), PDFNumber.of(bmp.height));
@@ -212,7 +216,8 @@ export default function CompressPDF() {
         addDefaultPage: false,
       });
 
-      const compressedBlob = new Blob([compressedBytes], {
+      // ✅ Blob fix: Uint8Array -> ArrayBuffer
+      const compressedBlob = new Blob([compressedBytes.buffer as ArrayBuffer], {
         type: "application/pdf",
       });
       const url = URL.createObjectURL(compressedBlob);
@@ -250,11 +255,7 @@ export default function CompressPDF() {
 
       <div className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-5xl mx-auto">
-          
-
           <main className="min-w-0">
-                        
-
             {/* Page Header */}
             <div className="mb-8">
               <h1 className="text-3xl md:text-4xl font-semibold text-slate-800 mb-4 tracking-tight">
@@ -669,8 +670,6 @@ export default function CompressPDF() {
               </div>
             </section>
           </main>
-
-          
         </div>
       </div>
 
