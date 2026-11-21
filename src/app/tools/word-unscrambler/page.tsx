@@ -6,27 +6,13 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-// Two dictionary sources
-const DICTIONARY_SOURCES: Record<string, { common: string; full: string }> = {
-  en: {
-    common:
-      "https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english-no-swears.txt",
-    full: "https://raw.githubusercontent.com/dwyl/english-words/master/words.txt",
-  },
-};
+// ✅ English-only dictionaries (loaded once, cached in localStorage)
+const COMMON_WORDS_URL =
+  "https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english-no-swears.txt";
+const FULL_WORDS_URL =
+  "https://raw.githubusercontent.com/dwyl/english-words/master/words.txt";
 
-const LANGUAGES = [
-  { code: "en", name: "English", flag: "us" },
-  { code: "es", name: "Spanish", flag: "es" },
-  { code: "fr", name: "French", flag: "fr" },
-  { code: "de", name: "German", flag: "de" },
-  { code: "it", name: "Italian", flag: "it" },
-  { code: "pt", name: "Portuguese", flag: "pt" },
-];
-
-// ✅ UPDATED: All tools from your home page
 const RELATED_TOOLS = [
-  // Generators
   {
     id: "word-counter",
     title: "Word Counter",
@@ -51,8 +37,6 @@ const RELATED_TOOLS = [
     description: "Generate placeholder text.",
     icon: "📄",
   },
-
-  // File Tools
   {
     id: "image-compressor",
     title: "Image Compressor",
@@ -65,8 +49,6 @@ const RELATED_TOOLS = [
     description: "Combine multiple PDF files.",
     icon: "📑",
   },
-
-  // SEO & Web
   {
     id: "qr-code-generator",
     title: "QR Code Generator",
@@ -91,7 +73,6 @@ export default function WordUnscrambler() {
   const [inputLetters, setInputLetters] = useState("");
   const [startsWith, setStartsWith] = useState("");
   const [endsWith, setEndsWith] = useState("");
-  const [selectedLang, setSelectedLang] = useState("en");
 
   const [includeShortWords, setIncludeShortWords] = useState(false);
   const [commonWordsOnly, setCommonWordsOnly] = useState(true);
@@ -110,56 +91,43 @@ export default function WordUnscrambler() {
       setError("");
       setResults([]);
 
-      const source = DICTIONARY_SOURCES[selectedLang];
-      if (!source) {
-        setError(`Dictionary for this language is not available yet.`);
-        setIsLoadingDict(false);
-        return;
-      }
-
       try {
-        // Load common words
-        const commonCacheKey = `toolbox_dict_common_${selectedLang}`;
-        const commonCached = localStorage.getItem(commonCacheKey);
-
+        // Load common words (cached)
+        const commonCached = localStorage.getItem("toolbox_dict_common_en");
         if (commonCached) {
           setCommonDictionary(new Set(JSON.parse(commonCached)));
         } else {
-          const commonResponse = await fetch(source.common);
-          if (commonResponse.ok) {
-            const commonText = await commonResponse.text();
-            const commonWords = commonText
+          const res = await fetch(COMMON_WORDS_URL);
+          if (res.ok) {
+            const words = (await res.text())
               .split("\n")
-              .map((word) => word.trim().toLowerCase())
-              .filter((word) => word.length > 0);
-
+              .map((w) => w.trim().toLowerCase())
+              .filter(Boolean);
             try {
-              localStorage.setItem(commonCacheKey, JSON.stringify(commonWords));
-            } catch (e) {}
-            setCommonDictionary(new Set(commonWords));
+              localStorage.setItem(
+                "toolbox_dict_common_en",
+                JSON.stringify(words),
+              );
+            } catch {}
+            setCommonDictionary(new Set(words));
           }
         }
 
-        // Load full dictionary
-        const fullCacheKey = `toolbox_dict_full_${selectedLang}`;
-        const fullCached = localStorage.getItem(fullCacheKey);
-
+        // Load full dictionary (cached)
+        const fullCached = localStorage.getItem("toolbox_dict_full_en");
         if (fullCached) {
           setDictionary(JSON.parse(fullCached));
         } else {
-          const fullResponse = await fetch(source.full);
-          if (!fullResponse.ok) throw new Error("Network response was not ok");
-
-          const fullText = await fullResponse.text();
-          const fullWords = fullText
+          const res = await fetch(FULL_WORDS_URL);
+          if (!res.ok) throw new Error("Network response was not ok");
+          const words = (await res.text())
             .split("\n")
-            .map((word) => word.trim().toLowerCase())
-            .filter((word) => word.length > 0);
-
+            .map((w) => w.trim().toLowerCase())
+            .filter(Boolean);
           try {
-            localStorage.setItem(fullCacheKey, JSON.stringify(fullWords));
-          } catch (e) {}
-          setDictionary(fullWords);
+            localStorage.setItem("toolbox_dict_full_en", JSON.stringify(words));
+          } catch {}
+          setDictionary(words);
         }
       } catch (err) {
         console.error("Dictionary load failed:", err);
@@ -172,7 +140,7 @@ export default function WordUnscrambler() {
     };
 
     loadDictionaries();
-  }, [selectedLang]);
+  }, []);
 
   const handleUnscramble = () => {
     setError("");
@@ -182,7 +150,6 @@ export default function WordUnscrambler() {
       setError("Please enter some scrambled letters.");
       return;
     }
-
     if (inputLetters.length < 2) {
       setError("Please enter at least 2 letters.");
       return;
@@ -195,17 +162,13 @@ export default function WordUnscrambler() {
     const startStr = startsWith.toLowerCase().trim();
     const endStr = endsWith.toLowerCase().trim();
     const inputLen = letters.length;
-
     const minLen = includeShortWords ? 2 : 3;
     const maxLen = inputLen;
 
     const foundWords = dictionary.filter((word) => {
       if (word.length > letters.length) return false;
-
-      const wordLetters = word.split("");
       const tempLetters = [...letters];
-
-      return wordLetters.every((letter) => {
+      return word.split("").every((letter) => {
         const index = tempLetters.indexOf(letter);
         if (index !== -1) {
           tempLetters.splice(index, 1);
@@ -218,9 +181,12 @@ export default function WordUnscrambler() {
     const uniqueWords = [...new Set(foundWords)]
       .filter((word) => {
         if (word.length < minLen || word.length > maxLen) return false;
-        if (commonWordsOnly && commonDictionary.size > 0) {
-          if (!commonDictionary.has(word)) return false;
-        }
+        if (
+          commonWordsOnly &&
+          commonDictionary.size > 0 &&
+          !commonDictionary.has(word)
+        )
+          return false;
         if (startStr && !word.startsWith(startStr)) return false;
         if (endStr && !word.endsWith(endStr)) return false;
         return true;
@@ -228,10 +194,11 @@ export default function WordUnscrambler() {
       .sort((a, b) => b.length - a.length);
 
     if (uniqueWords.length === 0) {
-      const suggestion = commonWordsOnly
-        ? "No common words found. Try unchecking 'Common words only' to see all valid words."
-        : `No valid words found. Try including shorter words.`;
-      setError(suggestion);
+      setError(
+        commonWordsOnly
+          ? "No common words found. Try unchecking 'Common words only' to see all valid words."
+          : "No valid words found. Try including shorter words.",
+      );
     } else {
       setResults(uniqueWords);
     }
@@ -242,20 +209,11 @@ export default function WordUnscrambler() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
-      <Header
-        selectedLang={selectedLang}
-        onLanguageChange={setSelectedLang}
-        showLanguageSelector={true}
-      />
+      <Header showLanguageSelector={false} />
 
       <div className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-5xl mx-auto">
-          
-
           <main className="min-w-0">
-            
-
-            {/* Page Header */}
             <div className="mb-8">
               <h1 className="text-3xl md:text-4xl font-semibold text-slate-800 mb-4 tracking-tight">
                 Word Unscrambler
@@ -266,7 +224,6 @@ export default function WordUnscrambler() {
               </p>
             </div>
 
-            {/* Trust Badges */}
             <div className="flex flex-wrap gap-3 mb-8">
               <div className="flex items-center gap-2 bg-white border border-slate-200 px-3 py-1.5 rounded-full text-xs font-semibold text-slate-700 shadow-sm">
                 <svg
@@ -340,7 +297,6 @@ export default function WordUnscrambler() {
               </div>
             )}
 
-            {/* Tool Card */}
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 mb-10">
               <div className="space-y-6">
                 <div>
@@ -430,8 +386,6 @@ export default function WordUnscrambler() {
               </div>
             </div>
 
-            
-
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-8 font-medium">
                 {error}
@@ -471,7 +425,6 @@ export default function WordUnscrambler() {
               </div>
             )}
 
-            {/* How to Use Section */}
             <section className="mb-12">
               <h2 className="text-2xl font-bold text-slate-900 mb-6 tracking-tight">
                 How to Use the Word Unscrambler
@@ -517,7 +470,6 @@ export default function WordUnscrambler() {
               </div>
             </section>
 
-            {/* FAQ Section */}
             <section className="mb-12">
               <h2 className="text-2xl font-bold text-slate-900 mb-6 tracking-tight">
                 Frequently Asked Questions
@@ -556,7 +508,6 @@ export default function WordUnscrambler() {
               </div>
             </section>
 
-            {/* ✅ UPDATED: Explore More Tools with View All button */}
             <section className="mb-8 border-t border-slate-200 pt-12">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
@@ -582,7 +533,6 @@ export default function WordUnscrambler() {
                   </svg>
                 </Link>
               </div>
-
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {RELATED_TOOLS.map((tool) => (
                   <Link
@@ -604,8 +554,6 @@ export default function WordUnscrambler() {
               </div>
             </section>
           </main>
-
-          
         </div>
       </div>
 
