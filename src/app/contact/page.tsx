@@ -1,12 +1,24 @@
 // src/app/contact/page.tsx
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export default function Contact() {
   const contactEmail = "contact@toolbox-utils.com";
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(contactEmail);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
@@ -53,9 +65,10 @@ export default function Contact() {
                 to reach us is via email.
               </p>
 
+              {/* Mailto Button (works on mobile) */}
               <a
                 href={`mailto:${contactEmail}`}
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-700 transition-colors shadow-md text-base"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-700 transition-colors shadow-md text-base mb-4"
               >
                 <svg
                   className="w-5 h-5"
@@ -70,10 +83,32 @@ export default function Contact() {
                     d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                   ></path>
                 </svg>
-                {contactEmail}
+                Open Email App
               </a>
 
-              <p className="text-sm text-slate-500 mt-4">
+              {/* Visible Email Address (for desktop users) */}
+              <div className="mt-6">
+                <p className="text-sm text-slate-500 mb-2">
+                  Or copy our email address:
+                </p>
+                <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-4 py-2">
+                  <code className="text-slate-900 font-mono text-sm">
+                    {contactEmail}
+                  </code>
+                  <button
+                    onClick={handleCopy}
+                    className={`text-xs font-semibold px-3 py-1.5 rounded-md transition-colors ${
+                      copied
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "bg-slate-200 text-slate-700 hover:bg-slate-300"
+                    }`}
+                  >
+                    {copied ? "✓ Copied!" : "Copy"}
+                  </button>
+                </div>
+              </div>
+
+              <p className="text-sm text-slate-500 mt-6">
                 We typically reply within 24 hours.
               </p>
             </div>

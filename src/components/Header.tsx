@@ -25,6 +25,7 @@ export default function Header({
   showLanguageSelector = true,
 }: HeaderProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -76,7 +77,7 @@ export default function Header({
             </Link>
           </div>
 
-          {/* 2. Navigation Links (Center Column) */}
+          {/* 2. Navigation Links (Center Column - Desktop Only) */}
           <nav className="hidden md:flex items-center justify-center gap-8">
             <Link
               href="/"
@@ -84,7 +85,6 @@ export default function Header({
             >
               Home
             </Link>
-
             <Link
               href="/about"
               className="text-slate-600 hover:text-blue-600 font-medium transition-colors"
@@ -99,8 +99,8 @@ export default function Header({
             </Link>
           </nav>
 
-          {/* 3. Language Selector (Right Column) */}
-          <div className="flex justify-end">
+          {/* 3. Right Column: Language Selector + Mobile Menu Button */}
+          <div className="flex justify-end items-center gap-4">
             {showLanguageSelector && onLanguageChange && (
               <div className="relative" ref={dropdownRef}>
                 <button
@@ -124,7 +124,7 @@ export default function Header({
                       strokeLinejoin="round"
                       strokeWidth="2"
                       d="M19 9l-7 7-7-7"
-                    ></path>
+                    />
                   </svg>
                 </button>
 
@@ -155,9 +155,77 @@ export default function Header({
                 )}
               </div>
             )}
+
+            {/* Mobile Menu Hamburger Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 rounded-md text-slate-600 hover:text-slate-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              aria-label="Toggle mobile menu"
+            >
+              {isMobileMenuOpen ? (
+                // "X" Close Icon
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              ) : (
+                // Hamburger Icon
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              )}
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden border-t border-gray-200 bg-white shadow-lg absolute left-0 right-0 z-40">
+          <div className="px-4 py-3 space-y-1">
+            <Link
+              href="/"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+            >
+              Home
+            </Link>
+            <Link
+              href="/about"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+            >
+              About
+            </Link>
+            <Link
+              href="/contact"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+            >
+              Contact
+            </Link>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
