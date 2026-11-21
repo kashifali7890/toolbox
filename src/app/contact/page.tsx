@@ -65,10 +65,10 @@ export default function Contact() {
                 to reach us is via email.
               </p>
 
-              {/* Mailto Button (works on mobile) */}
+              {/* 📱 MOBILE ONLY: mailto button (works because phones have mail handlers) */}
               <a
                 href={`mailto:${contactEmail}`}
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-700 transition-colors shadow-md text-base mb-4"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-700 transition-colors shadow-md text-base mb-4 md:hidden"
               >
                 <svg
                   className="w-5 h-5"
@@ -86,26 +86,38 @@ export default function Contact() {
                 Open Email App
               </a>
 
-              {/* Visible Email Address (for desktop users) */}
-              <div className="mt-6">
-                <p className="text-sm text-slate-500 mb-2">
-                  Or copy our email address:
+              {/* 💻 DESKTOP ONLY: copy box (mailto can't open webmail, so copying is the universal fix) */}
+              <div className="hidden md:block">
+                <p className="text-sm font-semibold text-slate-700 mb-3">
+                  On a computer? Copy the address below and paste it into Gmail,
+                  Outlook.com, or any mail app:
                 </p>
-                <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-4 py-2">
-                  <code className="text-slate-900 font-mono text-sm">
+                <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5">
+                  <code className="text-slate-900 font-mono text-base">
                     {contactEmail}
                   </code>
                   <button
                     onClick={handleCopy}
-                    className={`text-xs font-semibold px-3 py-1.5 rounded-md transition-colors ${
+                    className={`text-sm font-semibold px-4 py-1.5 rounded-md transition-colors ${
                       copied
-                        ? "bg-emerald-100 text-emerald-700"
-                        : "bg-slate-200 text-slate-700 hover:bg-slate-300"
+                        ? "bg-emerald-600 text-white"
+                        : "bg-slate-900 text-white hover:bg-slate-700"
                     }`}
                   >
                     {copied ? "✓ Copied!" : "Copy"}
                   </button>
                 </div>
+                {/* Subtle fallback for desktop users who DO have Outlook installed */}
+                <p className="text-xs text-slate-500 mt-3">
+                  Or{" "}
+                  <a
+                    href={`mailto:${contactEmail}`}
+                    className="text-blue-600 hover:text-blue-700 font-medium underline"
+                  >
+                    click here
+                  </a>{" "}
+                  to use your default desktop mail app.
+                </p>
               </div>
 
               <p className="text-sm text-slate-500 mt-6">
