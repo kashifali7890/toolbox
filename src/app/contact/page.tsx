@@ -108,16 +108,6 @@ export default function Contact() {
                   </button>
                 </div>
                 {/* Subtle fallback for desktop users who DO have Outlook installed */}
-                <p className="text-xs text-slate-500 mt-3">
-                  Or{" "}
-                  <a
-                    href={`mailto:${contactEmail}`}
-                    className="text-blue-600 hover:text-blue-700 font-medium underline"
-                  >
-                    click here
-                  </a>{" "}
-                  to use your default desktop mail app.
-                </p>
               </div>
 
               <p className="text-sm text-slate-500 mt-6">
