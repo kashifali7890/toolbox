@@ -13,20 +13,18 @@ export default function ToolsDirectory() {
 
       <div className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-5xl mx-auto">
-          
-
           <main className="min-w-0">
-            
-
-            <div className="mb-8">
-              <h1 className="text-3xl font-semibold text-slate-800">
+            {/* Page Header */}
+            <div className="mb-8 text-center">
+              <h1 className="text-3xl md:text-4xl font-semibold text-slate-800 mb-3 tracking-tight">
                 All Tools
               </h1>
-              <p className="text-slate-600 mt-2">
+              <p className="text-slate-600 text-lg">
                 Browse our complete collection of free utilities.
               </p>
             </div>
 
+            {/* Tools Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {ALL_TOOLS.map((tool) => (
                 <Link
@@ -44,9 +42,30 @@ export default function ToolsDirectory() {
                 </Link>
               ))}
             </div>
-          </main>
 
-          
+            {/* Back to Home Link */}
+            <div className="text-center">
+              <Link
+                href="/"
+                className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors inline-flex items-center gap-1"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                  ></path>
+                </svg>
+                Back to Toolbox Home
+              </Link>
+            </div>
+          </main>
         </div>
       </div>
 
