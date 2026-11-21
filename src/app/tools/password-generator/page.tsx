@@ -1,7 +1,7 @@
 // src/app/tools/password-generator/page.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -77,6 +77,8 @@ export default function PasswordGenerator() {
   const [includeNumbers, setIncludeNumbers] = useState(true);
   const [includeSymbols, setIncludeSymbols] = useState(true);
   const [excludeAmbiguous, setExcludeAmbiguous] = useState(false);
+
+  // ✅ Starts empty, no auto-generation
   const [password, setPassword] = useState("");
   const [copySuccess, setCopySuccess] = useState(false);
 
@@ -103,15 +105,10 @@ export default function PasswordGenerator() {
     setPassword(result);
   };
 
-  // Generate an initial password on load
-  useEffect(() => {
-    generate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Strength calculation based on entropy
+  // ✅ Strength calculation only matters if a password exists
   const poolSize = buildPool().length;
-  const entropy = poolSize > 0 ? length * Math.log2(poolSize) : 0;
+  const entropy = poolSize > 0 && password ? length * Math.log2(poolSize) : 0;
+
   const strength =
     entropy < 45
       ? {
@@ -248,22 +245,29 @@ export default function PasswordGenerator() {
                   <label className="block text-sm font-semibold text-slate-800">
                     Your Password
                   </label>
-                  <span className={`text-xs font-bold ${strength.text}`}>
-                    {strength.label}
-                  </span>
+                  {/* ✅ Conditional strength label */}
+                  {password ? (
+                    <span className={`text-xs font-bold ${strength.text}`}>
+                      {strength.label}
+                    </span>
+                  ) : (
+                    <span className="text-xs font-bold text-slate-400">
+                      Ready
+                    </span>
+                  )}
                 </div>
                 <div className="relative">
                   <input
                     type="text"
                     readOnly
                     value={password}
-                    placeholder="Select at least one option..."
-                    className="w-full px-4 py-4 pr-32 rounded-lg border-2 border-slate-300 bg-gray-50 font-mono text-lg text-slate-900 outline-none"
+                    placeholder="Click 'Generate' to create a password"
+                    className="w-full px-4 py-4 pr-32 rounded-lg border-2 border-slate-300 bg-gray-50 font-mono text-lg text-slate-900 outline-none placeholder:text-slate-400"
                   />
                   <button
                     onClick={handleCopy}
                     disabled={!password}
-                    className={`absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-md text-sm font-semibold transition-all disabled:opacity-50 ${
+                    className={`absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-md text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                       copySuccess
                         ? "bg-emerald-600 text-white"
                         : "bg-slate-900 text-white hover:bg-slate-700"
@@ -272,13 +276,16 @@ export default function PasswordGenerator() {
                     {copySuccess ? "Copied!" : "Copy"}
                   </button>
                 </div>
-                {/* Strength bar */}
-                <div className="mt-3 h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full ${strength.color} transition-all duration-300`}
-                    style={{ width: strength.width }}
-                  ></div>
-                </div>
+
+                {/* ✅ Conditional strength bar */}
+                {password && (
+                  <div className="mt-3 h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full ${strength.color} transition-all duration-300`}
+                      style={{ width: strength.width }}
+                    ></div>
+                  </div>
+                )}
               </div>
 
               {/* Controls */}
@@ -495,7 +502,6 @@ export default function PasswordGenerator() {
           </main>
         </div>
       </div>
-
       <Footer />
     </div>
   );
@@ -519,14 +525,10 @@ function Toggle({
         role="switch"
         aria-checked={checked}
         onClick={() => onChange(!checked)}
-        className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
-          checked ? "bg-blue-600" : "bg-slate-300"
-        }`}
+        className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${checked ? "bg-blue-600" : "bg-slate-300"}`}
       >
         <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-            checked ? "translate-x-6" : "translate-x-1"
-          }`}
+          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${checked ? "translate-x-6" : "translate-x-1"}`}
         />
       </button>
     </label>
