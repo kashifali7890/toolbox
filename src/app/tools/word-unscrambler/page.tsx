@@ -61,12 +61,6 @@ const RELATED_TOOLS = [
     description: "Create shorter links.",
     icon: "🔗",
   },
-  {
-    id: "meta-tag-generator",
-    title: "Meta Tag Generator",
-    description: "Create SEO meta tags.",
-    icon: "🏷️",
-  },
 ];
 
 export default function WordUnscrambler() {

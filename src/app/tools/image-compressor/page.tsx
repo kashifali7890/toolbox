@@ -55,12 +55,6 @@ const RELATED_TOOLS = [
     description: "Create shorter links.",
     icon: "🔗",
   },
-  {
-    id: "meta-tag-generator",
-    title: "Meta Tag Generator",
-    description: "Create SEO meta tags.",
-    icon: "🏷️",
-  },
 ];
 
 const formatBytes = (bytes: number) => {
@@ -197,11 +191,7 @@ export default function ImageCompressor() {
 
       <div className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-5xl mx-auto">
-          
-
           <main className="min-w-0">
-            
-
             <div className="mb-8">
               <h1 className="text-3xl md:text-4xl font-semibold text-slate-800 mb-4 tracking-tight">
                 Image Compressor
@@ -491,8 +481,6 @@ export default function ImageCompressor() {
               )}
             </div>
 
-            
-
             <section className="mb-12">
               <h2 className="text-2xl font-bold text-slate-900 mb-6 tracking-tight">
                 How to Compress Images
@@ -620,8 +608,6 @@ export default function ImageCompressor() {
               </div>
             </section>
           </main>
-
-          
         </div>
       </div>
 

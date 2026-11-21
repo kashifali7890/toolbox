@@ -56,12 +56,6 @@ const RELATED_TOOLS = [
     description: "Generate placeholder text.",
     icon: "📄",
   },
-  {
-    id: "meta-tag-generator",
-    title: "Meta Tag Generator",
-    description: "Create SEO meta tags.",
-    icon: "🏷️",
-  },
 ];
 
 export default function QRCodeGenerator() {
