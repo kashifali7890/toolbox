@@ -341,6 +341,10 @@ export default function MergePDF() {
                     e.target.value = "";
                   }}
                 />
+                <p className="text-xs text-emerald-600 font-medium mt-3">
+                  🔒 Your files are processed 100% in your browser and never
+                  uploaded to any server.
+                </p>
               </div>
 
               {/* File List */}

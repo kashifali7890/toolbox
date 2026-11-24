@@ -366,6 +366,10 @@ export default function CompressPDF() {
                     <p className="text-slate-500 text-sm">
                       PDF files up to 50MB
                     </p>
+                    <p className="text-xs text-emerald-600 font-medium mt-3">
+                      🔒 Your files are processed 100% in your browser and never
+                      uploaded to any server.
+                    </p>
                   </div>
                 </div>
 
