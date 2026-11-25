@@ -13,19 +13,15 @@ export default function Home() {
 
       <div className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-5xl mx-auto">
-          
-
           <main className="min-w-0">
-            
-
             {/* Hero Section */}
             <div className="text-center mb-10 py-4">
               <h1 className="text-3xl md:text-4xl font-semibold text-slate-800 mb-4 tracking-tight">
                 Simple tools for everyday tasks
               </h1>
               <p className="text-slate-600 text-base max-w-2xl mx-auto">
-                A multilingual collection of useful, privacy-first online tools.
-                100% free, no sign-up required.
+                A collection of useful, privacy-first online tools. 100% free,
+                no sign-up required.
               </p>
             </div>
 
@@ -158,8 +154,6 @@ export default function Home() {
               </div>
             </div>
           </main>
-
-          
         </div>
       </div>
 
