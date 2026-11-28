@@ -8,10 +8,11 @@ import { ALL_TOOLS } from "@/data/tools";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Toolbox | Free, 100% Private Online Utilities',
-  description: 'Free, privacy-first online tools for everyday tasks. Merge PDFs, generate passwords, and unscramble words. 100% client-side, no uploads, no sign-ups.',
+  title: "Toolbox | Free, 100% Private Online Utilities",
+  description:
+    "Free, privacy-first online tools for everyday tasks. Merge PDFs, generate passwords, and unscramble words. 100% client-side, no uploads, no sign-ups.",
 };
-  openGraph: {export default function Home() {
+export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
       <Header showLanguageSelector={false} />
