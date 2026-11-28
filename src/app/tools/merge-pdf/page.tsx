@@ -6,13 +6,6 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PDFDocument } from "pdf-lib";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Free Online PDF Merger | 100% Private & Client-Side | Toolbox",
-  description:
-    "Merge multiple PDF files into one document instantly. No uploads to servers, no sign-ups, and no tracking. 100% free and secure.",
-};
 
 const RELATED_TOOLS = [
   {
