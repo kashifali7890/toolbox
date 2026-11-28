@@ -5,7 +5,13 @@ import { useState } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Free Online Password Generator | 100% Private & Secure | Toolbox",
+  description:
+    "Generate strong, random passwords instantly. No sign-ups, no tracking, and no uploads. 100% free and secure.",
+};
 const RELATED_TOOLS = [
   {
     id: "word-unscrambler",
